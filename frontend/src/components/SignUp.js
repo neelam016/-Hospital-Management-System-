@@ -38,7 +38,8 @@ const SignUp = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const response = await fetch('http://localhost:5000/api/signup', {
+        const response = await fetch('https://hospital-management-system-qtd0.onrender.com/api/signup', {
+
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
