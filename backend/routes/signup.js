@@ -1,22 +1,35 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
 const router = express.Router();
 
+// ✅ PATIENT SIGNUP
 router.post('/', async (req, res) => {
   const { firstName, lastName, email, password, role } = req.body;
 
-  console.log('Received data:', req.body); // Add this line to log the request body
-
   try {
-    const user = new User({ firstName, lastName, email, password, role });
-    await user.save();
-    res.status(201).send({ message: 'User registered successfully' });
-  } catch (error) {
-    if (error.code === 11000) {
-      return res.status(400).send({ error: 'Email already exists' });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already exists' });
     }
-    res.status(400).send({ error: error.message });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      role: role || 'patient',
+    });
+
+    await user.save();
+
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 

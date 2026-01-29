@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const Appointment = require('../models/Appointment');
 const Doctor = require('../models/Doctor');
 const Prescription = require('../models/Prescription');
-
 const router = express.Router();
 
 const auth = (req, res, next) => {
